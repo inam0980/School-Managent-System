@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}Programs - Settings{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">Programs</span>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-th-list text-indigo-600 mr-2"></i> Program Management
+            </h1>
+            <p class="text-gray-600">Define academic programs offered by the school.</p>
+        </div>
+        <a href="{% url 'settings_app:program_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Add Program
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    {% if programs.exists %}
+    <table class="w-full table-auto">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="px-4 py-2 text-left">Name</th>
+                <th class="px-4 py-2 text-left">Code</th>
+                <th class="px-4 py-2 text-left">Active</th>
+                <th class="px-4 py-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for program in programs %}
+            <tr class="border-t">
+                <td class="px-4 py-2">{{ program.name }}</td>
+                <td class="px-4 py-2">{{ program.code }}</td>
+                <td class="px-4 py-2">{% if program.is_active %}Yes{% else %}No{% endif %}</td>
+                <td class="px-4 py-2 text-right">
+                    <a href="{% url 'settings_app:program_edit' program.pk %}"
+                       class="text-indigo-600 hover:text-indigo-800">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-600">No programs defined yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

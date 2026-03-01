@@ -184,12 +184,25 @@ def school_dashboard(request):
 @login_required
 def school_list(request):
     """List all schools"""
+    from django.conf import settings
+
     schools = School.objects.select_related('organization').filter(is_active=True)
     
-    # Filters
-    organization_id = request.GET.get('organization')
-    school_type = request.GET.get('school_type')
-    search_query = request.GET.get('search', '')
+    # enforce single-school mode if configured
+    if settings.FORCE_SCHOOL_IDENTIFIER:
+        schools = schools.filter(
+            Q(school_name__icontains=settings.FORCE_SCHOOL_IDENTIFIER) |
+            Q(school_code__icontains=settings.FORCE_SCHOOL_IDENTIFIER)
+        )
+        # skip other filters since there is only one school to show
+        organization_id = None
+        school_type = None
+        search_query = ''
+    else:
+        # Filters
+        organization_id = request.GET.get('organization')
+        school_type = request.GET.get('school_type')
+        search_query = request.GET.get('search', '')
     
     if organization_id:
         schools = schools.filter(organization_id=organization_id)

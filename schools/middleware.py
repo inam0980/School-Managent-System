@@ -4,6 +4,7 @@ Sets the current school based on session or user preferences.
 """
 from django.utils.deprecation import MiddlewareMixin
 from .models import School
+from django.db.models import Q
 
 
 class SchoolContextMiddleware(MiddlewareMixin):
@@ -41,6 +42,19 @@ class SchoolContextMiddleware(MiddlewareMixin):
                     # Store in session for future requests
                     request.session['current_school_id'] = school.id
         
+        # If a forced identifier is configured, ignore session/user prefs
+        from django.conf import settings
+        if settings.FORCE_SCHOOL_IDENTIFIER:
+            # try to match by name or code
+            forced = School.objects.filter(
+                Q(school_name__icontains=settings.FORCE_SCHOOL_IDENTIFIER) |
+                Q(school_code__icontains=settings.FORCE_SCHOOL_IDENTIFIER),
+                is_active=True
+            ).select_related('organization').first()
+            if forced:
+                school = forced
+                if hasattr(request, 'session'):
+                    request.session['current_school_id'] = school.id
         # Fallback to first active school
         if not school:
             school = School.objects.select_related('organization').filter(is_active=True).first()
@@ -52,6 +66,10 @@ class SchoolContextMiddleware(MiddlewareMixin):
         
         # Also attach organization if school exists
         request.organization = school.organization if school else None
+        
+        # expose forced identifier for templates
+        from django.conf import settings
+        request.force_school_identifier = settings.FORCE_SCHOOL_IDENTIFIER
         
         return None
 

@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}{{ action }} Program - Settings{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'settings_app:program_list' %}" class="text-gray-600 hover:text-indigo-600">Programs</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">{{ action }} Program</span>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md p-6">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Name</label>
+                {{ form.name }}
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Code</label>
+                {{ form.code }}
+            </div>
+        </div>
+        <div class="mt-4">
+            <label class="inline-flex items-center">
+                {{ form.is_active }}
+                <span class="ml-2">Active</span>
+            </label>
+        </div>
+        <div class="mt-6 flex gap-4">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg">Save</button>
+            <a href="{% url 'settings_app:program_list' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

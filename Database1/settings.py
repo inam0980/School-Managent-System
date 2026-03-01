@@ -31,6 +31,12 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('1', 'true', 'yes')
 # Allow hosts configuration via environment, default to wildcard for dev
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# Optional: force the application to only operate for a single school.
+# Provide either the school name or code; matching is case-insensitive and
+# partial. Useful when deploying for one institution such as "Alkawthar".
+# If empty or not set, normal multi-school behavior applies.
+FORCE_SCHOOL_IDENTIFIER = os.getenv('FORCE_SCHOOL_IDENTIFIER', '')
+
 
 # Application definition
 

@@ -131,14 +131,16 @@
                         <i class="fas fa-eye mr-1"></i>View Dashboard
                     </a>
                     {% else %}
-                    <a href="{% url 'schools:school_switch' school.pk %}" 
-                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-lg transition text-sm font-medium">
-                        <i class="fas fa-exchange-alt mr-1"></i>Switch
-                    </a>
-                    <a href="{% url 'schools:school_detail' school.pk %}" 
-                       class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition text-sm">
-                        <i class="fas fa-info-circle"></i>
-                    </a>
+                        {% if not request.force_school_identifier %}
+                        <a href="{% url 'schools:school_switch' school.pk %}" 
+                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-lg transition text-sm font-medium">
+                            <i class="fas fa-exchange-alt mr-1"></i>Switch
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'schools:school_detail' school.pk %}" 
+                           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
                     {% endif %}
                     {% if user.is_superuser %}
                     <a href="{% url 'schools:school_update' school.pk %}" 
