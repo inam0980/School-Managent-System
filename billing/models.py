@@ -124,6 +124,21 @@ class Invoice(models.Model):
     # Discount
     discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name='invoices')
     
+    # ZATCA E-Invoice Integration
+    zatca_submitted = models.BooleanField(default=False, verbose_name="Submitted to ZATCA")
+    zatca_compliance_status = models.CharField(
+        max_length=50, 
+        blank=True,
+        choices=[
+            ('pending', 'Pending'),
+            ('compliant', 'Compliant'),
+            ('non_compliant', 'Non-Compliant'),
+            ('rejected', 'Rejected'),
+        ],
+        verbose_name="ZATCA Compliance Status"
+    )
+    zatca_submission_uuid = models.CharField(max_length=100, blank=True, verbose_name="ZATCA Submission UUID")
+    
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

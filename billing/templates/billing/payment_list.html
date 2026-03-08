@@ -1,0 +1,195 @@
+{% extends 'layout.html' %}
+
+{% block page_title %}Payments - Billing{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">Payments</span>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-money-bill-wave text-green-600 mr-2"></i> Payment History
+            </h1>
+            <p class="text-gray-600">View and manage all payment transactions</p>
+        </div>
+        <a href="{% url 'billing:list' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition flex items-center gap-2 shadow-lg">
+            <i class="fas fa-file-invoice-dollar"></i> View Invoices
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+        <p class="text-sm opacity-80 mb-1">Total Collected</p>
+        <h3 class="text-3xl font-bold">{{ total_collected|floatformat:2 }} SAR</h3>
+        <p class="text-xs opacity-70 mt-2"><i class="fas fa-check-circle"></i> Completed payments</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+        <p class="text-sm opacity-80 mb-1">Total Payments</p>
+        <h3 class="text-3xl font-bold">{{ total_count }}</h3>
+        <p class="text-xs opacity-70 mt-2"><i class="fas fa-receipt"></i> All transactions</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg">
+        <p class="text-sm opacity-80 mb-1">Average Payment</p>
+        <h3 class="text-3xl font-bold">
+            {{ average_payment|floatformat:2 }} SAR
+        </h3>
+        <p class="text-xs opacity-70 mt-2"><i class="fas fa-calculator"></i> Per transaction</p>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <form method="get" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+                <label class="block text-gray-700 font-semibold mb-2">Search</label>
+                <input type="text" name="search" value="{{ search_query }}"
+                       placeholder="Payment number, receipt number, invoice number, student name..."
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Payment Method</label>
+                <select name="method" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All Methods</option>
+                    <option value="cash" {% if method_filter == 'cash' %}selected{% endif %}>Cash</option>
+                    <option value="bank_transfer" {% if method_filter == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+                    <option value="credit_card" {% if method_filter == 'credit_card' %}selected{% endif %}>Credit Card</option>
+                    <option value="debit_card" {% if method_filter == 'debit_card' %}selected{% endif %}>Debit Card</option>
+                    <option value="cheque" {% if method_filter == 'cheque' %}selected{% endif %}>Cheque</option>
+                    <option value="online" {% if method_filter == 'online' %}selected{% endif %}>Online Payment</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Status</label>
+                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>Failed</option>
+                    <option value="refunded" {% if status_filter == 'refunded' %}selected{% endif %}>Refunded</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+            <a href="{% url 'billing:payments' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                <i class="fas fa-redo mr-2"></i>Reset
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Payments Table -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment #</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receipt</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% if payments %}
+                    {% for payment in payments %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-semibold text-blue-600">{{ payment.payment_number }}</span>
+                            {% if payment.receipt_number %}
+                                <br><span class="text-xs text-gray-500">Receipt: {{ payment.receipt_number }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="{% url 'billing:detail' payment.invoice.invoice_number %}" class="text-blue-600 hover:text-blue-800 font-medium">
+                                {{ payment.invoice.invoice_number }}
+                            </a>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if payment.invoice.student %}
+                                <div class="text-sm">
+                                    <div class="font-medium text-gray-900">{{ payment.invoice.student.first_name }} {{ payment.invoice.student.last_name }}</div>
+                                    <div class="text-gray-500">ID: {{ payment.invoice.student.student_id }}</div>
+                                </div>
+                            {% else %}
+                                <span class="text-gray-500">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ payment.payment_date|date:"M d, Y" }}</div>
+                            <div class="text-sm text-gray-500">{{ payment.payment_time|time:"H:i" }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-semibold text-green-600">{{ payment.amount|floatformat:2 }} SAR</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if payment.payment_method == 'cash' %}bg-green-100 text-green-800
+                                {% elif payment.payment_method == 'bank_transfer' %}bg-blue-100 text-blue-800
+                                {% elif payment.payment_method == 'credit_card' %}bg-purple-100 text-purple-800
+                                {% elif payment.payment_method == 'debit_card' %}bg-indigo-100 text-indigo-800
+                                {% elif payment.payment_method == 'cheque' %}bg-yellow-100 text-yellow-800
+                                {% elif payment.payment_method == 'online' %}bg-cyan-100 text-cyan-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ payment.get_payment_method_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if payment.status == 'completed' %}bg-green-100 text-green-800
+                                {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                {% elif payment.status == 'failed' %}bg-red-100 text-red-800
+                                {% elif payment.status == 'refunded' %}bg-gray-100 text-gray-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ payment.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if payment.receipt_printed %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check mr-1"></i>Printed
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <i class="fas fa-times mr-1"></i>Not Printed
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <div class="text-gray-500">
+                                <i class="fas fa-money-bill-wave text-4xl mb-4"></i>
+                                <p class="text-lg font-medium">No payments found</p>
+                                <p class="text-sm">Try adjusting your search criteria or create some payments first.</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

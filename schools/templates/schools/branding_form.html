@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}School Branding - {{ school.school_name }}{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_list' %}" class="text-gray-600 hover:text-blue-600 transition">Schools</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_detail' school.pk %}" class="text-gray-600 hover:text-blue-600 transition">{{ school.school_name }}</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">Branding</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">School Branding</h1>
+            <p class="text-gray-600 mt-1">Customize the branding and appearance for {{ school.school_name }}</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Colors -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Color Scheme</h3>
+                </div>
+
+                <div>{{ form.primary_color.label_tag }} {{ form.primary_color }}</div>
+                <div>{{ form.secondary_color.label_tag }} {{ form.secondary_color }}</div>
+                <div>{{ form.accent_color.label_tag }} {{ form.accent_color }}</div>
+
+                <!-- Fonts -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Typography</h3>
+                </div>
+
+                <div>{{ form.primary_font.label_tag }} {{ form.primary_font }}</div>
+                <div>{{ form.secondary_font.label_tag }} {{ form.secondary_font }}</div>
+
+                <!-- Logos and Images -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Logos and Images</h3>
+                </div>
+
+                <div>{{ form.logo.label_tag }} {{ form.logo }}</div>
+                <div>{{ form.favicon.label_tag }} {{ form.favicon }}</div>
+                <div>{{ form.banner_image.label_tag }} {{ form.banner_image }}</div>
+
+                <!-- Footer -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Footer Information</h3>
+                </div>
+
+                <div class="md:col-span-2">{{ form.footer_text.label_tag }} {{ form.footer_text }}</div>
+                <div>{{ form.copyright_text.label_tag }} {{ form.copyright_text }}</div>
+                <div>{{ form.contact_info.label_tag }} {{ form.contact_info }}</div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'schools:school_detail' school.pk %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Save Branding
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -258,6 +258,7 @@ def payment_create(request, invoice_number):
 
 
 @login_required
+@module_required('billing')
 def payment_list(request):
     """Display list of all payments"""
     payments = Payment.objects.select_related('invoice', 'invoice__student').all()
@@ -289,13 +290,19 @@ def payment_list(request):
         total_count=Count('id')
     )
     
+    # Calculate average payment
+    total_collected = stats['total_collected'] or 0
+    total_count = stats['total_count'] or 0
+    average_payment = total_collected / total_count if total_count > 0 else 0
+    
     context = {
         'payments': payments,
         'search_query': search_query,
         'method_filter': method_filter,
         'status_filter': status_filter,
-        'total_collected': stats['total_collected'] or 0,
-        'total_count': stats['total_count'] or 0,
+        'total_collected': total_collected,
+        'total_count': total_count,
+        'average_payment': average_payment,
     }
     
     return render(request, 'billing/payment_list.html', context)

@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}{% if form.instance.pk %}Update School{% else %}Create School{% endif %}{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_list' %}" class="text-gray-600 hover:text-blue-600 transition">Schools</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">{% if form.instance.pk %}Update{% else %}Create{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">
+                {% if form.instance.pk %}Update School{% else %}Create New School{% endif %}
+            </h1>
+            <p class="text-gray-600 mt-1">
+                {% if form.instance.pk %}Modify school details{% else %}Add a new school to the system{% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                </div>
+
+                <div>{{ form.organization.label_tag }} {{ form.organization }}</div>
+                <div>{{ form.school_name.label_tag }} {{ form.school_name }}</div>
+                <div>{{ form.school_name_arabic.label_tag }} {{ form.school_name_arabic }}</div>
+                <div>{{ form.school_code.label_tag }} {{ form.school_code }}</div>
+                <div>{{ form.school_type.label_tag }} {{ form.school_type }}</div>
+                <div>{{ form.shift.label_tag }} {{ form.shift }}</div>
+
+                <!-- Contact Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
+                </div>
+
+                <div>{{ form.email.label_tag }} {{ form.email }}</div>
+                <div>{{ form.phone.label_tag }} {{ form.phone }}</div>
+                <div>{{ form.fax.label_tag }} {{ form.fax }}</div>
+
+                <!-- Address Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Address Information</h3>
+                </div>
+
+                <div class="md:col-span-2">{{ form.address.label_tag }} {{ form.address }}</div>
+                <div>{{ form.city.label_tag }} {{ form.city }}</div>
+                <div>{{ form.district.label_tag }} {{ form.district }}</div>
+                <div>{{ form.postal_code.label_tag }} {{ form.postal_code }}</div>
+
+                <!-- Administrative Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Administrative Information</h3>
+                </div>
+
+                <div>{{ form.license_number.label_tag }} {{ form.license_number }}</div>
+                <div>{{ form.accreditation_body.label_tag }} {{ form.accreditation_body }}</div>
+                <div>{{ form.accreditation_number.label_tag }} {{ form.accreditation_number }}</div>
+                <div>{{ form.establishment_date.label_tag }} {{ form.establishment_date }}</div>
+                <div>{{ form.principal_name.label_tag }} {{ form.principal_name }}</div>
+                <div>{{ form.principal_email.label_tag }} {{ form.principal_email }}</div>
+                <div>{{ form.principal_phone.label_tag }} {{ form.principal_phone }}</div>
+                <div>{{ form.total_capacity.label_tag }} {{ form.total_capacity }}</div>
+                <div>{{ form.logo.label_tag }} {{ form.logo }}</div>
+                <div>{{ form.is_active.label_tag }} {{ form.is_active }}</div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'schools:school_list' %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    {% if form.instance.pk %}Update School{% else %}Create School{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}{{ organization.name }} - Organization Details{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:organization_dashboard' %}" class="text-gray-600 hover:text-blue-600 transition">Organizations</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">{{ organization.name }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ organization.name }}</h1>
+                    {% if organization.name_arabic %}
+                        <p class="text-lg text-gray-600 mt-1">{{ organization.name_arabic }}</p>
+                    {% endif %}
+                    <p class="text-gray-600 mt-2">{{ organization.organization_code }}</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'schools:organization_update' organization.pk %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-edit mr-2"></i>Edit Organization
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Organization Info -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Basic Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Registration Number</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ organization.registration_number|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Organization Code</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ organization.organization_code }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Email</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if organization.email %}
+                                        <a href="mailto:{{ organization.email }}" class="text-blue-600 hover:text-blue-800">{{ organization.email }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if organization.phone %}
+                                        <a href="tel:{{ organization.phone }}" class="text-blue-600 hover:text-blue-800">{{ organization.phone }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Website</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if organization.website %}
+                                        <a href="{{ organization.website }}" target="_blank" class="text-blue-600 hover:text-blue-800">{{ organization.website }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if organization.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if organization.is_active %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Address Information</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-900">{{ organization.address|linebreaks }}</p>
+                            <p class="text-sm text-gray-600 mt-2">{{ organization.city }}, {{ organization.country }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Information</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Tax Number</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ organization.tax_number|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">VAT Registration Number</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ organization.vat_registration_number|default:"Not provided" }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Logo -->
+                    {% if organization.logo %}
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Logo</h3>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <img src="{{ organization.logo.url }}" alt="{{ organization.name }} Logo" class="w-full h-auto rounded-lg">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Schools -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Schools</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-2xl font-bold text-gray-900">{{ organization.schools.count }}</p>
+                            <p class="text-sm text-gray-600">Total Schools</p>
+                            <div class="mt-3">
+                                <a href="{% url 'schools:school_list' %}?organization={{ organization.pk }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    View Schools
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

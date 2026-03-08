@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}Academic Configuration - {{ school.school_name }}{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_list' %}" class="text-gray-600 hover:text-blue-600 transition">Schools</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_detail' school.pk %}" class="text-gray-600 hover:text-blue-600 transition">{{ school.school_name }}</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">Academic Config</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Academic Configuration</h1>
+            <p class="text-gray-600 mt-1">Configure academic settings for {{ school.school_name }}</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Academic Year -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Academic Year</h3>
+                </div>
+
+                <div>{{ form.academic_year_start.label_tag }} {{ form.academic_year_start }}</div>
+                <div>{{ form.academic_year_end.label_tag }} {{ form.academic_year_end }}</div>
+
+                <!-- Grading System -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Grading System</h3>
+                </div>
+
+                <div>{{ form.grading_system.label_tag }} {{ form.grading_system }}</div>
+                <div>{{ form.passing_grade.label_tag }} {{ form.passing_grade }}</div>
+
+                <!-- Class Schedule -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Class Schedule</h3>
+                </div>
+
+                <div>{{ form.class_start_time.label_tag }} {{ form.class_start_time }}</div>
+                <div>{{ form.class_end_time.label_tag }} {{ form.class_end_time }}</div>
+                <div>{{ form.class_duration.label_tag }} {{ form.class_duration }}</div>
+                <div>{{ form.break_duration.label_tag }} {{ form.break_duration }}</div>
+
+                <!-- Attendance -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Attendance Settings</h3>
+                </div>
+
+                <div>{{ form.attendance_required_percentage.label_tag }} {{ form.attendance_required_percentage }}</div>
+                <div>{{ form.late_threshold_minutes.label_tag }} {{ form.late_threshold_minutes }}</div>
+
+                <!-- Language Settings -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Language Settings</h3>
+                </div>
+
+                <div>{{ form.primary_language.label_tag }} {{ form.primary_language }}</div>
+                <div>{{ form.secondary_language.label_tag }} {{ form.secondary_language }}</div>
+                <div>{{ form.rtl_support.label_tag }} {{ form.rtl_support }}</div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'schools:school_detail' school.pk %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Save Configuration
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

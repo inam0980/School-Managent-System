@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}Organizations{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">Organizations</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Organizations</h1>
+                    <p class="text-gray-600 mt-1">Manage all organizations in the system</p>
+                </div>
+                <a href="{% url 'schools:organization_create' %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-plus mr-2"></i>Add Organization
+                </a>
+            </div>
+        </div>
+
+        <div class="p-6">
+            {% if organizations %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for organization in organizations %}
+                        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 hover:shadow-md transition">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ organization.name }}</h3>
+                                    {% if organization.name_arabic %}
+                                        <p class="text-sm text-gray-600 mt-1">{{ organization.name_arabic }}</p>
+                                    {% endif %}
+                                    <p class="text-sm text-gray-500 mt-2">{{ organization.organization_code }}</p>
+                                    <p class="text-sm text-gray-500">{{ organization.city }}, {{ organization.country }}</p>
+                                    <div class="mt-3">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if organization.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                            {% if organization.is_active %}Active{% else %}Inactive{% endif %}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">{{ organization.school_count }} schools</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex space-x-2">
+                                <a href="{% url 'schools:organization_detail' organization.pk %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    View Details
+                                </a>
+                                <a href="{% url 'schools:organization_update' organization.pk %}" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                    Edit
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-building text-gray-400 text-4xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No organizations found</h3>
+                    <p class="text-gray-600 mb-6">Get started by creating your first organization.</p>
+                    <a href="{% url 'schools:organization_create' %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Create Organization
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

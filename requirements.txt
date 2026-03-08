@@ -40,6 +40,11 @@ charset-normalizer==3.4.4
 idna==3.11
 urllib3==2.5.0
 
+# ZATCA E-Invoice Integration
+cryptography==41.0.7
+lxml==4.9.3
+zeep==4.2.1
+
 # Development Tools (optional - comment out for production)
 # ipython==9.7.0
 # ipykernel==7.1.0

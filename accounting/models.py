@@ -30,7 +30,7 @@ class FiscalYear(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.school.name} - {self.name}"
+        return f"{self.school.school_name} - {self.name}"
 
     def clean(self):
         if self.start_date and self.end_date and self.start_date >= self.end_date:

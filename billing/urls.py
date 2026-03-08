@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import zatca_views
 
 app_name = 'billing'
 
@@ -13,4 +14,11 @@ urlpatterns = [
     path('invoice/<str:invoice_number>/pdf/', views.invoice_pdf, name='pdf'),
     path('invoice/<str:invoice_number>/print/', views.invoice_print, name='print'),
     path('payments/', views.payment_list, name='payments'),
+    
+    # ZATCA E-Invoice Integration
+    path('zatca/configuration/', zatca_views.zatca_configuration_view, name='zatca_configuration'),
+    path('invoice/<str:invoice_number>/zatca/submit/', zatca_views.submit_invoice_to_zatca, name='zatca_submit'),
+    path('invoice/<str:invoice_number>/zatca/status/', zatca_views.zatca_submission_status, name='zatca_status'),
+    path('invoice/<str:invoice_number>/zatca/xml/', zatca_views.download_zatca_xml, name='zatca_xml'),
+    path('invoice/<str:invoice_number>/zatca/qr/', zatca_views.download_zatca_qr, name='zatca_qr'),
 ]

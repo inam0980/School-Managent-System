@@ -1,0 +1,197 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}{{ school.school_name }} - School Details{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_list' %}" class="text-gray-600 hover:text-blue-600 transition">Schools</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">{{ school.school_name }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ school.school_name }}</h1>
+                    {% if school.school_name_arabic %}
+                        <p class="text-lg text-gray-600 mt-1">{{ school.school_name_arabic }}</p>
+                    {% endif %}
+                    <p class="text-gray-600 mt-2">{{ school.school_code }}</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'schools:school_update' school.pk %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-edit mr-2"></i>Edit School
+                    </a>
+                    <a href="{% url 'schools:academic_config_update' school.pk %}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-cog mr-2"></i>Academic Config
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- School Info -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Basic Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">School Code</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.school_code }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">School Type</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.get_school_type_display }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Shift</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.get_shift_display }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Organization</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    <a href="{% url 'schools:organization_detail' school.organization.pk %}" class="text-blue-600 hover:text-blue-800">
+                                        {{ school.organization.name }}
+                                    </a>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Total Capacity</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.total_capacity|default:"Not specified" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if school.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if school.is_active %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Email</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if school.email %}
+                                        <a href="mailto:{{ school.email }}" class="text-blue-600 hover:text-blue-800">{{ school.email }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if school.phone %}
+                                        <a href="tel:{{ school.phone }}" class="text-blue-600 hover:text-blue-800">{{ school.phone }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Fax</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.fax|default:"Not provided" }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Address Information</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-900">{{ school.address|linebreaks }}</p>
+                            <p class="text-sm text-gray-600 mt-2">{{ school.city }}, {{ school.district }} {{ school.postal_code }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Administrative Information -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Administrative Information</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">License Number</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.license_number|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Accreditation Body</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.accreditation_body|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Accreditation Number</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.accreditation_number|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Establishment Date</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.establishment_date|date:"M d, Y"|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Principal Name</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ school.principal_name|default:"Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Principal Email</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if school.principal_email %}
+                                        <a href="mailto:{{ school.principal_email }}" class="text-blue-600 hover:text-blue-800">{{ school.principal_email }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Principal Phone</dt>
+                                <dd class="text-sm text-gray-900 mt-1">
+                                    {% if school.principal_phone %}
+                                        <a href="tel:{{ school.principal_phone }}" class="text-blue-600 hover:text-blue-800">{{ school.principal_phone }}</a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Logo -->
+                    {% if school.logo %}
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">School Logo</h3>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <img src="{{ school.logo.url }}" alt="{{ school.school_name }} Logo" class="w-full h-auto rounded-lg">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Quick Actions -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-2">
+                            <a href="{% url 'schools:branding_update' school.pk %}" class="block w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
+                                Update Branding
+                            </a>
+                            <a href="{% url 'schools:school_admin_create' school.pk %}" class="block w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
+                                Add School Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

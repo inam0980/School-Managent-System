@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block page_title %}{% if form.instance.pk %}Update School Admin{% else %}Create School Admin{% endif %}{% endblock %}
+
+{% block breadcrumb_items %}
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_list' %}" class="text-gray-600 hover:text-blue-600 transition">Schools</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="{% url 'schools:school_detail' school.pk %}" class="text-gray-600 hover:text-blue-600 transition">{{ school.school_name }}</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800 font-medium">{% if form.instance.pk %}Update Admin{% else %}Create Admin{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">
+                {% if form.instance.pk %}Update School Administrator{% else %}Create School Administrator{% endif %}
+            </h1>
+            <p class="text-gray-600 mt-1">
+                {% if form.instance.pk %}Modify administrator details{% else %}Add a new administrator for {{ school.school_name }}{% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                </div>
+
+                <div>{{ form.user.label_tag }} {{ form.user }}</div>
+                <div>{{ form.school.label_tag }} {{ form.school }}</div>
+                <div>{{ form.role.label_tag }} {{ form.role }}</div>
+                <div>{{ form.department.label_tag }} {{ form.department }}</div>
+
+                <!-- Contact Information -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
+                </div>
+
+                <div>{{ form.office_phone.label_tag }} {{ form.office_phone }}</div>
+                <div>{{ form.mobile_phone.label_tag }} {{ form.mobile_phone }}</div>
+                <div>{{ form.emergency_contact.label_tag }} {{ form.emergency_contact }}</div>
+
+                <!-- Employment Details -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Employment Details</h3>
+                </div>
+
+                <div>{{ form.employee_id.label_tag }} {{ form.employee_id }}</div>
+                <div>{{ form.hire_date.label_tag }} {{ form.hire_date }}</div>
+                <div>{{ form.contract_type.label_tag }} {{ form.contract_type }}</div>
+                <div>{{ form.salary.label_tag }} {{ form.salary }}</div>
+
+                <!-- Permissions and Status -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Permissions and Status</h3>
+                </div>
+
+                <div>{{ form.can_manage_students.label_tag }} {{ form.can_manage_students }}</div>
+                <div>{{ form.can_manage_staff.label_tag }} {{ form.can_manage_staff }}</div>
+                <div>{{ form.can_view_reports.label_tag }} {{ form.can_view_reports }}</div>
+                <div>{{ form.can_manage_finances.label_tag }} {{ form.can_manage_finances }}</div>
+                <div>{{ form.is_active.label_tag }} {{ form.is_active }}</div>
+                <div>{{ form.notes.label_tag }} {{ form.notes }}</div>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'schools:school_detail' school.pk %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    {% if form.instance.pk %}Update Administrator{% else %}Create Administrator{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -8,6 +8,8 @@ This script creates:
 - Sample payments
 - Fiscal years and accounts
 - Sample journal entries
+- VAT configuration
+Run this script after creating the accountant user with create_accountant_only.py
 """
 
 import os
